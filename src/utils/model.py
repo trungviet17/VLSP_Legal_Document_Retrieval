@@ -10,7 +10,6 @@ class ModelFactory:
 
     @staticmethod 
     def get_openai_llm(model_name: str = "gpt-3.5-turbo", temperature: float = 0.7, max_tokens: int = 1000):
-        from langchain_openai import ChatOpenAI
         return ChatOpenAI(
             model_name=model_name,
             temperature=temperature,
@@ -30,7 +29,7 @@ class ModelFactory:
 
     @staticmethod
     def get_google_llm(model_name: str = "gemini-1.5-flash"):
-        from langchain_google_genai import ChatGoogleGenerativeAI
+    
         return ChatGoogleGenerativeAI(
             model=model_name,
             temperature=0.7,
@@ -41,7 +40,6 @@ class ModelFactory:
 
     @staticmethod
     def get_google_embeddings(model_name: str = "textembedding-gecko@001"):
-        from langchain_google_genai import GoogleGenerativeAIEmbeddings
         return GoogleGenerativeAIEmbeddings(
             model=model_name,
             google_api_key=EnvConfig.GEMINI_API_KEY
