@@ -26,6 +26,7 @@ class QdrantConnector:
             type=embedding_type
         )
         self.vector_size = vector_size
+        self._init_collection_()
 
 
     def _init_collection_(self): 

@@ -1,0 +1,21 @@
+db:
+  collection_name: "baseline"
+
+embedding: 
+  vector_size: 512  
+  embedding_model: "huyydangg/DEk21_hcmute_embedding"
+  embedding_type: "transformer"
+
+chunking:
+  max_tokens: 512
+  
+retrieval:
+  limit: 5
+  threshold: 0.5
+
+data:
+  corpus_path: "src/data/vlsp/legal_corpus.json"
+  train_path: "src/data/vlsp/train.json"
+  
+output:
+  result_path: "results/baseline_results.txt"
