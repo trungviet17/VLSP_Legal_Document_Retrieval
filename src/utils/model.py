@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.envconfig import EnvConfig
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 
 
 class ModelFactory:
@@ -20,7 +21,6 @@ class ModelFactory:
 
     @staticmethod
     def get_openai_embeddings(model_name: str = "text-embedding-3-small"):
-        from langchain_openai import OpenAIEmbeddings
         return OpenAIEmbeddings(
             model=model_name,
             openai_api_key=EnvConfig.OPENAI_API_KEY
@@ -44,3 +44,25 @@ class ModelFactory:
             model=model_name,
             google_api_key=EnvConfig.GEMINI_API_KEY
         )
+    
+
+    @staticmethod 
+    def get_transformer_embeddings(model_name: str = "all-MiniLM-L6-v2"):
+        return HuggingFaceEmbeddings(
+            model_name=model_name,
+            cache_folder = EnvConfig.CACHE_DIR, 
+            model_kwargs={"device": "gpu"},
+        )
+    
+
+
+def get_embedding_model(model_name: str = "all-MiniLM-L6-v2", type: str = "transformer"):
+    
+    if type == "openai":
+        return ModelFactory.get_openai_embeddings(model_name)
+    elif type == "google":
+        return ModelFactory.get_google_embeddings(model_name)
+    elif type == "transformer":
+        return ModelFactory.get_transformer_embeddings(model_name)
+    else:
+        raise ValueError(f"Unsupported embedding model type: {type}")
