@@ -47,22 +47,22 @@ class ModelFactory:
     
 
     @staticmethod 
-    def get_transformer_embeddings(model_name: str = "all-MiniLM-L6-v2"):
+    def get_transformer_embeddings(model_name: str = "all-MiniLM-L6-v2", cache_dir: str = EnvConfig.CACHE_DIR):
         return HuggingFaceEmbeddings(
             model_name=model_name,
-            cache_folder = EnvConfig.CACHE_DIR, 
-            model_kwargs={"device": "gpu"},
+            cache_folder = cache_dir, 
+            model_kwargs={"device": "cuda"},
         )
     
 
 
-def get_embedding_model(model_name: str = "all-MiniLM-L6-v2", type: str = "transformer"):
+def get_embedding_model(model_name: str = "all-MiniLM-L6-v2", type: str = "transformer", cache_dir: str = EnvConfig.CACHE_DIR):
     
     if type == "openai":
         return ModelFactory.get_openai_embeddings(model_name)
     elif type == "google":
         return ModelFactory.get_google_embeddings(model_name)
     elif type == "transformer":
-        return ModelFactory.get_transformer_embeddings(model_name)
+        return ModelFactory.get_transformer_embeddings(model_name, cache_dir=cache_dir)
     else:
         raise ValueError(f"Unsupported embedding model type: {type}")

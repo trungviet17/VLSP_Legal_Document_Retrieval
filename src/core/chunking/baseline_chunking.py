@@ -20,7 +20,7 @@ class BaseChunker:
         processed = []
         for doc in corpus:
             chunks = self._chunk_(doc)
-            chunks = ViTokenizer.tokenize(chunks)  
+            chunks = [ViTokenizer.tokenize(chunk) for chunk in chunks]  
             processed.extend(chunks)
         return processed
 

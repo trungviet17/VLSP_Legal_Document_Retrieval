@@ -1,3 +1,6 @@
+base_path: "/workspace/thviet/trungnnv/vlsp-2025"
+cache_dir: "${base_path}/src/cache_dir"
+
 db:
   collection_name: "baseline"
 
@@ -14,8 +17,8 @@ retrieval:
   threshold: 0.5
 
 data:
-  corpus_path: "src/data/vlsp/legal_corpus.json"
-  train_path: "src/data/vlsp/train.json"
+  corpus_path: "${base_path}/src/data/vlsp/legal_corpus.json"
+  train_path: "${base_path}/src/data/vlsp/train.json"
   
 output:
-  result_path: "results/baseline_results.txt"
+  result_path: "${base_path}/results/baseline_results.txt"

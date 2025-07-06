@@ -208,5 +208,7 @@ __marimo__/
 vlsp-venv 
 data
 .vscode 
+cache_dir
+outputs
 
 

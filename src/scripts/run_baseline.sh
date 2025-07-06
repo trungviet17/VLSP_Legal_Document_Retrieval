@@ -1,8 +1,10 @@
+#!/bin/bash
+
+# Default values
+
 BASE_PATH="/workspace/thviet/trungnnv/vlsp-2025"
-
-
 run_pipeline() {
-    cmd="python src/pipeline/baseline.py"
+    cmd="python $BASE_PATH/src/pipeline/baseline.py"
     
     if [ -n "$BASE_PATH" ]; then
         cmd="$cmd base_path=$BASE_PATH"

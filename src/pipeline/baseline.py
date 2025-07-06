@@ -24,7 +24,8 @@ class BasePipeline:
             collection_name = cfg.db.collection_name,
             vector_size = cfg.embedding.vector_size, 
             embedding_model_name = cfg.embedding.embedding_model, 
-            embedding_type = cfg.embedding.embedding_type
+            embedding_type = cfg.embedding.embedding_type, 
+            embedding_cache_dir = cfg.cache_dir
         )
 
         self.retriever = BaseRetriever(
@@ -53,7 +54,7 @@ class BasePipeline:
                 texts.append(sub_doc['content_Article']) 
                 metadata.append({
                     'id': doc['id'], 
-                    'aid': sub_doc['id'],
+                    'aid': sub_doc['aid'],
                     'law_id': doc['law_id'],
                     
                 })
@@ -109,27 +110,34 @@ class BasePipeline:
         print("Saving results to", self.cfg.output.result_path)
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        output_data = {
+            "timestamp": timestamp,
+            "configuration": {
+            "collection": self.cfg.db.collection_name,
+            "embedding_model": self.cfg.embedding.embedding_model,
+            "chunk_size": self.cfg.chunking.max_tokens,
+            "retrieval_limit": self.cfg.retrieval.limit,
+            "threshold": self.cfg.retrieval.threshold
+            },
+            "metrics": {
+            "macro_recall": macro_recall,
+            "macro_precision": macro_precision,
+            "macro_f2": macro_f2
+            },
+            "per_query_results": [
+            {
+                "query": res['query'],
+                "ground_truth": res['ground_truth'],
+                "retrieved": res['retrieved'],
+                "recall": rec,
+                "precision": prec,
+                "f2": f2
+            } for res, rec, prec, f2 in zip(results, recall, precision, f2_scores)]
+        }
+
         with open(self.cfg.output.result_path, 'w', encoding='utf-8') as f:
-            f.write(f"Evaluation Results - {timestamp}\n")
-            f.write("=" * 50 + "\n\n")
-            f.write(f"Configuration:\n")
-            f.write(f"- Collection: {self.cfg.db.collection_name}\n")
-            f.write(f"- Embedding model: {self.cfg.db.embedding_model}\n")
-            f.write(f"- Chunk size: {self.cfg.chunking.max_tokens}\n")
-            f.write(f"- Retrieval limit: {self.cfg.retrieval.limit}\n")
-            f.write(f"- Threshold: {self.cfg.retrieval.threshold}\n\n")
-            
-            f.write("Metrics:\n")
-            f.write(f"- Macro Recall: {macro_recall:.4f}\n")
-            f.write(f"- Macro Precision: {macro_precision:.4f}\n")
-            f.write(f"- Macro F2 Score: {macro_f2:.4f}\n\n")
-            
-            f.write("Per-query Results:\n")
-            for i, (res, rec, prec, f2) in enumerate(zip(results, recall, precision, f2_scores)):
-                f.write(f"Query {i+1}: {res['query'][:50]}...\n")
-                f.write(f"  - Ground truth: {res['ground_truth']}\n")
-                f.write(f"  - Predicted: {res['predicted']}\n")
-                f.write(f"  - Recall: {rec:.4f}, Precision: {prec:.4f}, F2: {f2:.4f}\n\n")
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
         
         return {
             "macro_recall": macro_recall,
