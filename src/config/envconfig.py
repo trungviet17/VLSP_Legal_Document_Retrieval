@@ -12,3 +12,6 @@ class EnvConfig:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
     CACHE_DIR = "./cache"
+
+    QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+    QDRANT_URL = os.getenv("QDRANT_URL")
