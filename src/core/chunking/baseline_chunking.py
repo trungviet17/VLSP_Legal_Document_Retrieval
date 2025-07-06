@@ -1,3 +1,6 @@
+import sys, os 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))) 
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from typing import List, Dict, Any
 from pyvi import ViTokenizer

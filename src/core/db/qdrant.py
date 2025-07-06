@@ -34,12 +34,10 @@ class QdrantConnector:
         if self.collection_name not in [col.name for col in collections]:
             self.client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config={
-                    "vector": {
-                        "size": self.vector_size,
-                        "distance": "Cosine"
-                    }
-                }
+                vectors_config=VectorParams(
+                    size = self.vector_size,
+                    distance=Distance.COSINE,  
+                )
             )
         else:
             print(f"Collection {self.collection_name} already exists.")
