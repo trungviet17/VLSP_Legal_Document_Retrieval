@@ -11,6 +11,7 @@ embedding:
 
 chunking:
   max_tokens: 768 
+  chunk_overlap: 50
   
 retrieval:
   limit: 5

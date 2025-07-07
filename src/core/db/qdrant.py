@@ -46,10 +46,10 @@ class QdrantConnector:
 
 
 
-    def embedd_chunks(self, chunks: List[Dict[str, Any]]):
+    def embedd_chunks(self, chunks: List[Dict[str, Any]], batch_size: int = 1000):
 
         vectors = self.embedding_model.embed_documents([chunk['text'] for chunk in chunks])
-    
+        points = []
         for i, (chunk, vector) in tqdm(enumerate(zip(chunks, vectors)), total=len(chunks), desc="Embedding and preparing points"):
             meta = chunk.get('metadata', None)
 
@@ -60,11 +60,20 @@ class QdrantConnector:
                 "payload": meta, 
                
             }
-            point_struct = PointStruct(**point)
+            points.append(PointStruct(**point))
 
+            if len(points) >= batch_size:
+                self.client.upsert(
+                    collection_name=self.collection_name,
+                    points=points,
+                    wait=True
+                )
+                points = []
+                
+        if points:
             self.client.upsert(
                 collection_name=self.collection_name,
-                points=[point_struct],
+                points=points,
                 wait=True
             )
         

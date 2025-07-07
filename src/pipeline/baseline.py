@@ -17,7 +17,8 @@ class BasePipeline:
         self.cfg = cfg
 
         self.chunker = BaseChunker(
-            max_tokens = cfg.chunking.max_tokens
+            max_tokens = cfg.chunking.max_tokens,
+            chunk_overlap = cfg.chunking.chunk_overlap
         )   
 
         self.db = QdrantConnector(
