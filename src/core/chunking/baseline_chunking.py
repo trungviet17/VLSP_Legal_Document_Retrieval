@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from typing import List, Dict, Any
 from pyvi import ViTokenizer
+from tqdm import tqdm
 
 
 class BaseChunker: 
@@ -16,13 +17,18 @@ class BaseChunker:
             separators= ["\n", ".", "!", "?", ";"]
         ) 
 
-    def process_corpus(self, corpus: List[str]) -> List[Dict[str, Any]]: 
+    def process_corpus(self, corpus: List[str], metadata: List[Dict[str, Any]]) -> List[Dict[str, Any]]: 
         processed = []
-        for doc in corpus:
+        for doc, meta in tqdm(zip(corpus, metadata), total = len(corpus), desc="Processing documents"):
             chunks = self._chunk_(doc)
             chunks = [ViTokenizer.tokenize(chunk) for chunk in chunks]  
-            processed.extend(chunks)
+            for chunk in chunks:
+                processed.append({
+                    "text": chunk,
+                    "metadata": meta
+                })
         return processed
+      
 
 
     def _chunk_(self, text: str) -> list[str]:

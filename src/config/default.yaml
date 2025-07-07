@@ -5,12 +5,12 @@ db:
   collection_name: "baseline"
 
 embedding: 
-  vector_size: 512  
+  vector_size: 768
   embedding_model: "huyydangg/DEk21_hcmute_embedding"
   embedding_type: "transformer"
 
 chunking:
-  max_tokens: 512
+  max_tokens: 768 
   
 retrieval:
   limit: 5
@@ -21,4 +21,4 @@ data:
   train_path: "${base_path}/src/data/vlsp/train.json"
   
 output:
-  result_path: "${base_path}/results/baseline_results.txt"
+  result_path: "${base_path}/src/results/baseline_results.txt"

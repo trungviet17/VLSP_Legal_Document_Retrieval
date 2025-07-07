@@ -6,6 +6,7 @@ from utils.model import get_embedding_model
 from typing import Any, List, Dict
 from qdrant_client.models import PointStruct, Distance, VectorParams 
 from uuid import uuid4
+from tqdm import tqdm
 
 
 class QdrantConnector: 
@@ -45,27 +46,27 @@ class QdrantConnector:
 
 
 
-    def embedd_chunks(self, chunks: List[str], metadata: List[Dict[str, Any]]):
-        
-        vectors = self.embedding_model.embed_documents(chunks)
-        points = []
+    def embedd_chunks(self, chunks: List[Dict[str, Any]]):
 
-        for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
-            meta = metadata[i] if metadata else {}
-            meta['text'] = chunk
+        vectors = self.embedding_model.embed_documents([chunk['text'] for chunk in chunks])
+    
+        for i, (chunk, vector) in tqdm(enumerate(zip(chunks, vectors)), total=len(chunks), desc="Embedding and preparing points"):
+            meta = chunk.get('metadata', None)
+
+            meta['text'] = chunk['text']
             point = {
                 "id": str(uuid4()),
                 "vector": vector,
                 "payload": meta, 
                
             }
-            points.append(PointStruct(**point))
-        
-        self.client.upsert(
-            collection_name=self.collection_name,
-            points=points,
-            wait=True
-        )
+            point_struct = PointStruct(**point)
+
+            self.client.upsert(
+                collection_name=self.collection_name,
+                points=[point_struct],
+                wait=True
+            )
         
 
 

@@ -59,11 +59,10 @@ class BasePipeline:
                     
                 })
                 
-        self.chunks = self.chunker.process_corpus(texts)
+        self.chunks = self.chunker.process_corpus(texts, metadata)
 
         self.db.embedd_chunks(
-            chunks = self.chunks, 
-            metadata = metadata
+            chunks = self.chunks
         )
 
     def query_data(self): 
