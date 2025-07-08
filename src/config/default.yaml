@@ -2,7 +2,7 @@ base_path: "/workspace/thviet/trungnnv/vlsp-2025"
 cache_dir: "${base_path}/src/cache_dir"
 
 db:
-  collection_name: "baseline"
+  collection_name: "baseline_512_tokens"
 
 embedding: 
   vector_size: 768
@@ -10,7 +10,7 @@ embedding:
   embedding_type: "transformer"
 
 chunking:
-  max_tokens: 768 
+  max_tokens: 512
   chunk_overlap: 50
   
 retrieval:
