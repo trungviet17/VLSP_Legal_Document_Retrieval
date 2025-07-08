@@ -14,12 +14,12 @@ chunking:
   chunk_overlap: 50
   
 retrieval:
-  limit: 5
-  threshold: 0.5
+  limit: 6
+  threshold: 0.6
 
 data:
   corpus_path: "${base_path}/src/data/vlsp/legal_corpus.json"
   train_path: "${base_path}/src/data/vlsp/train.json"
   
 output:
-  result_path: "${base_path}/src/results/baseline_results.txt"
+  result_path: "${base_path}/src/results/baseline_results.json"

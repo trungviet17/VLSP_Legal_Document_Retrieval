@@ -84,7 +84,7 @@ class BasePipeline:
                 limit = self.cfg.retrieval.limit
             )
 
-            retrieved_ids = [doc['aid'] for doc in retrieved_docs]
+            retrieved_ids = [doc['payload']['aid'] for doc in retrieved_docs]
 
             results.append(
                 {
@@ -105,7 +105,7 @@ class BasePipeline:
 
         macro_recall = sum(recall) / len(recall) if recall else 0
         macro_precision = sum(precision) / len(precision) if precision else 0
-        macro_f2 = MetricCalculator.macro_f2(recall, precision) if recall and precision else 0
+        macro_f2 = MetricCalculator.macro_f2([result['ground_truth'] for result in results], [result['retrieved'] for result in results]) 
 
         print("Saving results to", self.cfg.output.result_path)
 
@@ -147,7 +147,7 @@ class BasePipeline:
 
 
     def run(self): 
-        self.process_corpus()
+        # self.process_corpus()
         results = self.query_data()
         evaluation_results = self.evaluate_and_save_results(results)
         return evaluation_results

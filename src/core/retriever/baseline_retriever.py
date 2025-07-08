@@ -8,15 +8,12 @@ class BaseRetriever:
         self.qdrant = db_connector
 
 
-    def retrieve(self, queries: list[str], limit: int = 5, threshold: float = 0.5) -> list[dict]:
+    def retrieve(self, query: list[str], limit: int = 5, threshold: float = 0.5) -> dict:
       
-        results = []
-        for query in queries:
-            query = ViTokenizer.tokenize(query)
-            response = self.qdrant.query(
-                query=query, 
-                limit=limit, 
-                threshold=threshold
-            )
-            results.extend(response)
-        return results
+        query = ViTokenizer.tokenize(query)
+        response = self.qdrant.query(
+            query=query, 
+            limit=limit, 
+            threshold=threshold
+        )
+        return response
