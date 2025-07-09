@@ -46,8 +46,8 @@ pip install uv
 uv pip install -r requirements.txt
 
 cd src/scripts 
-chmod +x run_baseline.sh --base_path= <your_path> --device=<cuda / cpu>
+chmod +x run_baseline.sh 
 
-./run_baseline.sh
+./run_baseline.sh --base_path= <your_path> --device=<cuda / cpu>
 ```
 
