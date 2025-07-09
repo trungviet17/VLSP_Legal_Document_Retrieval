@@ -157,6 +157,7 @@ while [[ $# -gt 0 ]]; do
             echo "  -th, --threshold         Set the retrieval threshold."
             echo "  -e, --embedding-model    Set the embedding model name."
             echo "  -v, --vector-size        Set the embedding vector size."
+            echo "  -d, --device             Set the device (e.g., cuda, cpu)." 
             echo "  -h, --help               Show this help message."
             exit 0
             ;;
