@@ -8,6 +8,7 @@ embedding:
   vector_size: 768
   embedding_model: "huyydangg/DEk21_hcmute_embedding"
   embedding_type: "transformer"
+  device: "cuda"
 
 chunking:
   max_tokens: 512

@@ -47,11 +47,11 @@ class ModelFactory:
     
 
     @staticmethod 
-    def get_transformer_embeddings(model_name: str = "all-MiniLM-L6-v2", cache_dir: str = EnvConfig.CACHE_DIR):
+    def get_transformer_embeddings(model_name: str = "all-MiniLM-L6-v2", cache_dir: str = EnvConfig.CACHE_DIR, device: str = "cuda"):
         return HuggingFaceEmbeddings(
             model_name=model_name,
             cache_folder = cache_dir, 
-            model_kwargs={"device": "cuda"},
+            model_kwargs={"device": device},
         )
     
 

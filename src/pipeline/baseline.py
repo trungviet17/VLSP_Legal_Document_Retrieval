@@ -26,7 +26,8 @@ class BasePipeline:
             vector_size = cfg.embedding.vector_size, 
             embedding_model_name = cfg.embedding.embedding_model, 
             embedding_type = cfg.embedding.embedding_type, 
-            embedding_cache_dir = cfg.cache_dir
+            embedding_cache_dir = cfg.cache_dir,
+            embedding_device = cfg.embedding.device,
         )
 
         self.retriever = BaseRetriever(

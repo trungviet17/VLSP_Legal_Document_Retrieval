@@ -44,6 +44,9 @@ run_pipeline() {
     if [ -n "$VECTOR_SIZE" ]; then
         cmd="$cmd embedding.vector_size=$VECTOR_SIZE"
     fi
+    if [ -n "$DEVICE" ]; then
+        cmd="$cmd embedding.device=$DEVICE"
+    fi
 
     echo "Running pipeline with the following command:"
     echo "$cmd"
@@ -131,6 +134,14 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             fi
             VECTOR_SIZE="$2"
+            shift 2
+            ;;
+        -d|--device)
+            if [ -z "$2" ]; then
+                echo "Please provide a device (e.g., cuda, cpu)."
+                exit 1
+            fi
+            DEVICE="$2"
             shift 2
             ;;
         -h|--help)
