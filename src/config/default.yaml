@@ -6,7 +6,7 @@ db:
 
 embedding: 
   vector_size: 768
-  embedding_model: "huyydangg/DEk21_hcmute_embedding"
+  embedding_model: "truro7/vn-law-embedding"
   embedding_type: "transformer"
   device: "cuda"
 
@@ -15,8 +15,8 @@ chunking:
   chunk_overlap: 50
   
 retrieval:
-  limit: 6
-  threshold: 0.6
+  limit: 9
+  threshold: 0.8
 
 data:
   corpus_path: "${base_path}/src/data/vlsp/legal_corpus.json"

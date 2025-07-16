@@ -148,7 +148,8 @@ class BasePipeline:
 
 
     def run(self): 
-        # self.process_corpus()
+        
+        self.process_corpus() # comment this line if you want to skip processing corpus
         results = self.query_data()
         evaluation_results = self.evaluate_and_save_results(results)
         return evaluation_results
