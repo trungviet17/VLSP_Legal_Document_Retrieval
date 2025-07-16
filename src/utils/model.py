@@ -51,7 +51,7 @@ class ModelFactory:
         return HuggingFaceEmbeddings(
             model_name=model_name,
             cache_folder = cache_dir, 
-            model_kwargs={"device": "cuda"},
+            model_kwargs={"device": "cpu"},
         )
     
 

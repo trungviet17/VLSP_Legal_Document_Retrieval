@@ -2,7 +2,7 @@ base_path: "/workspace/thviet/trungnnv/vlsp-2025"
 cache_dir: "${base_path}/src/cache_dir"
 
 db:
-  collection_name: "baseline_512_tokens"
+  collection_name: "test_chienpham"
 
 embedding: 
   vector_size: 768
