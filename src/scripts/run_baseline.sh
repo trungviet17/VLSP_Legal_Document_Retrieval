@@ -44,6 +44,9 @@ run_pipeline() {
     if [ -n "$VECTOR_SIZE" ]; then
         cmd="$cmd embedding.vector_size=$VECTOR_SIZE"
     fi
+    if [ -n "$DEVICE" ]; then
+        cmd="$cmd embedding.device=$DEVICE"
+    fi
 
     echo "Running pipeline with the following command:"
     echo "$cmd"
@@ -133,6 +136,14 @@ while [[ $# -gt 0 ]]; do
             VECTOR_SIZE="$2"
             shift 2
             ;;
+        -d|--device)
+            if [ -z "$2" ]; then
+                echo "Please provide a device (e.g., cuda, cpu)."
+                exit 1
+            fi
+            DEVICE="$2"
+            shift 2
+            ;;
         -h|--help)
             echo "Usage: $0 [options]"
             echo "Options:"
@@ -146,6 +157,7 @@ while [[ $# -gt 0 ]]; do
             echo "  -th, --threshold         Set the retrieval threshold."
             echo "  -e, --embedding-model    Set the embedding model name."
             echo "  -v, --vector-size        Set the embedding vector size."
+            echo "  -d, --device             Set the device (e.g., cuda, cpu)." 
             echo "  -h, --help               Show this help message."
             exit 0
             ;;

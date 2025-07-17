@@ -11,7 +11,8 @@ from tqdm import tqdm
 
 class QdrantConnector: 
 
-    def __init__(self, collection_name: str, vector_size: int,  embedding_model_name: str = "all-MiniLM-L6-v2", embedding_type : str = "transformer", embedding_cache_dir: str = EnvConfig.CACHE_DIR,
+    def __init__(self, collection_name: str, vector_size: int,  embedding_model_name: str = "all-MiniLM-L6-v2", 
+                    embedding_type : str = "transformer", embedding_cache_dir: str = EnvConfig.CACHE_DIR, embedding_device : str = "cuda",
                     qdrant_url : str = EnvConfig.QDRANT_URL,
                     qdrant_api_key : str = EnvConfig.QDRANT_API_KEY,  
                     ):  
@@ -25,7 +26,8 @@ class QdrantConnector:
         self.embedding_model = get_embedding_model(
             model_name=embedding_model_name, 
             type=embedding_type, 
-            cache_dir=embedding_cache_dir
+            cache_dir=embedding_cache_dir,
+            device=embedding_device
         )
         self.vector_size = vector_size
         self._init_collection_()
