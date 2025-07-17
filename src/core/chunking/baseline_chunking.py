@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 
 class BaseChunker: 
-
+    
     def __init__(self, max_tokens: int = 512, chunk_overlap: int = 50) :
         self.max_tokens = max_tokens
         self.chunk_overlap = chunk_overlap 
@@ -22,9 +22,7 @@ class BaseChunker:
                     "metadata": meta
                 })
         return processed
-      
-
-
+    
     def _chunk_(self, text: str) -> list[str]:
 
         tokenized_text = ViTokenizer.tokenize(text)
@@ -32,7 +30,7 @@ class BaseChunker:
 
         chunks = []
         start = 0 
-
+        
         while start < len(tokens): 
             end = min(start + self.max_tokens, len(tokens))
 
@@ -49,10 +47,6 @@ class BaseChunker:
 
         return chunks 
 
-
-
-
-
 if __name__ == "__main__": 
 
 
@@ -62,12 +56,8 @@ if __name__ == "__main__":
     tokens = tokenized_text.split() 
 
     print(f"Total tokens: {len(tokens)}")
-
-
     chunker = BaseChunker(max_tokens=512, chunk_overlap=50)
-
     chunks = chunker._chunk_(text)
-
 
     for i, chunk in enumerate(chunks):
         
