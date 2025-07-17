@@ -5,40 +5,37 @@ import numpy as np
 import argparse
 import json
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))) 
+
 from sklearn.cluster import AgglomerativeClustering, DBSCAN
 from sklearn.metrics.pairwise import cosine_similarity
-from sentence_transformers import SentenceTransformer
-from typing import List, Dict, Any
-from pyvi import ViTokenizer
-from tqdm import tqdm
+from utils.model import get_embedding_model
 from baseline_chunking import BaseChunker
+from nltk import sent_tokenize
 
 
 class ClusteringChunker(BaseChunker):
-    def __init__(self,
-                 max_tokens: int=512, 
-                 chunk_overlap: int=50,
-                 model_name: str='sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2',
-                 lambda_pos: float=0.5,
-                 clustering_method: str='agglomerative',
-                 eps: float=0.5,
-                 min_samples: int=2):
+    def __init__(self, max_tokens: int=512, chunk_overlap: int=50,
+                 model_name: str='truro7/vn-law-embedding', lambda_pos: float=0.5,
+                 clustering_method: str='agglomerative', eps: float=0.5, min_samples: int=2):
+        
         super().__init__(max_tokens, chunk_overlap)
         self.max_tokens = max_tokens
         self.chunk_overlap = chunk_overlap
-        self.model = SentenceTransformer(model_name)
+        self.model = get_embedding_model(model_name=model_name, type='transformer')
         self.lambda_pos = lambda_pos
         self.clustering_method = clustering_method
         self.eps = eps
         self.min_samples = min_samples
 
     def _chunk_(self, text: str) -> list[str]:
+        
         sentences = re.split(r'(?:\n|\t|\n\t|\t\t)+', text.strip())
+        
         n = len(sentences)
         if n == 0:
             return []
         
-        embeddings = self.model.encode(sentences)
+        embeddings = self.model.embed_documents(sentences)
         distance_matrix = np.zeros((n, n))
 
         for i in range(n):
@@ -72,7 +69,7 @@ class ClusteringChunker(BaseChunker):
         # Split chunk if surpass max_tokens
         chunks = [''.join(group) for group in cluster_map.values()]
         final_chunks = []
-        test = True
+       
         for i, chunk in enumerate(chunks):
             if len(chunk) > self.max_tokens:
                 sub_chunks = super()._chunk_(chunk)
@@ -80,13 +77,16 @@ class ClusteringChunker(BaseChunker):
             else:
                 final_chunks.append(chunk)
         return final_chunks
+    
+
+    def process_corpus(self, corpus, metadata):
+        return super().process_corpus(corpus, metadata)
 
 
 if __name__ == "__main__": 
     parser = argparse.ArgumentParser(description="Clustering-based text chunking")
     parser.add_argument('--max_tokens', type=int, default=512, help='Maximum number of tokens per chunk')
     parser.add_argument('--chunk_overlap', type=int, default=50, help='Number of overlapping tokens between chunks')
-    parser.add_argument('--output', type=str, default='./src/data/chunk_output/chunks.json', help='Output file for chunks')
     parser.add_argument('--clustering_method', type=str, default='agglomerative', choices=['agglomerative', 'dbscan'], help='Clustering method to use')
     args = parser.parse_args()
 
@@ -104,8 +104,6 @@ if __name__ == "__main__":
     chunker = ClusteringChunker(max_tokens=args.max_tokens, chunk_overlap=args.chunk_overlap, clustering_method=args.clustering_method)
     chunks = chunker._chunk_(text)
 
-    with open(args.output, 'w', encoding='utf-8') as f:
-        json.dump(chunks, f, ensure_ascii=False, indent=2)
     
     for i, chunk in enumerate(chunks):        
         print(f"Chunk {i+1} with len {len(chunk.split())}: {chunk}\n")
