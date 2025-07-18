@@ -7,7 +7,7 @@ from typing import Any, List, Dict
 from qdrant_client.models import PointStruct, Distance, VectorParams 
 from uuid import uuid4
 from tqdm import tqdm
-
+from core.db.payload_schema import AIDPayloadSchema
 
 class QdrantConnector: 
 
@@ -59,7 +59,12 @@ class QdrantConnector:
             point = {
                 "id": str(uuid4()),
                 "vector": vector,
-                "payload": meta, 
+                "payload": AIDPayloadSchema(
+                    id=chunk.get('id', str(uuid4())),
+                    aid=chunk.get('aid', ""),
+                    law_id=chunk.get('law_id', ""),
+                    text=chunk['text']
+                ).model_dump(), 
                
             }
             points.append(PointStruct(**point))

@@ -32,7 +32,7 @@ class ExpandContext :
         return data 
 
 
-    def get_context(self): 
+    def get_context_with_vbpl(self): 
 
         base_url = "https://vbpl.vn/pages/vbpq-timkiem.aspx?type=0&s=1&SearchIn=Title,Title1&Keyword="
         
@@ -49,6 +49,9 @@ class ExpandContext :
                 for item in tqdm(self.data, desc="Expanding context", unit="item"):
                     keyword = item.get("law_id", "")
                     url = base_url + keyword
+
+                    if "law_context" in item:
+                        continue
                     # logger.info(f"Processing URL: {url}")
                     max_retries = 3
                     found = False
@@ -98,7 +101,19 @@ class ExpandContext :
        
 
         print("Context expansion completed successfully.")
+        self.save_context("../data/vlsp/legal_corpus_with_context.json")
         return self.data
+
+
+    def get_content_with_tvpl(self): 
+        pass 
+
+
+
+
+
+
+
 
     def save_context(self, output_path: str):
 
@@ -108,7 +123,7 @@ class ExpandContext :
 
 
 if __name__ == "__main__":
-    file_path = "../data/vlsp/legal_corpus.json"
+    file_path = "../data/vlsp/legal_corpus_with_context.json"
     context_expander = ExpandContext(file_path)
     context_data = context_expander.get_context()
     print("Context expansion completed.") 

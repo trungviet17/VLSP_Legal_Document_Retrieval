@@ -10,8 +10,6 @@ from sklearn.cluster import AgglomerativeClustering, DBSCAN
 from sklearn.metrics.pairwise import cosine_similarity
 from utils.model import get_embedding_model
 from baseline_chunking import BaseChunker
-from nltk import sent_tokenize
-
 
 class ClusteringChunker(BaseChunker):
     def __init__(self, max_tokens: int=512, chunk_overlap: int=50,
