@@ -27,19 +27,10 @@ class MaxMinChunker(BaseChunker):
             cache_dir=embedding_cache_dir
         )
 
-    def process_corpus(self, corpus: List[str], metadata: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        processed = []
-        for doc, meta in tqdm(zip(corpus, metadata), total=len(corpus), desc="Processing documents"):
-            chunks = self._chunk_(doc)
-            for chunk in chunks:
-                processed.append({
-                    "text": chunk,
-                    "metadata": meta
-                })
-        return processed
-    
-    @staticmethod
-    def process_sentences(sentences, embeddings, fixed_threshold=0.6, c=0.9, init_constant=1.5):
+    def process_corpus(self, corpus, metadata):
+        return super().process_corpus(corpus, metadata)
+
+    def process_sentences(self, sentences, embeddings):
         """
         Process sentences into paragraphs based on semantic similarity.
 
@@ -70,7 +61,7 @@ class MaxMinChunker(BaseChunker):
                 new_sentence_similarities = cosine_similarity(embeddings[i].reshape(1, -1), cluster_embeddings)[0]
 
                 # Adjust threshold based on cluster size and similarity
-                adjusted_threshold = pairwise_min * c * sigmoid((cluster_end - cluster_start) - 1)
+                adjusted_threshold = pairwise_min * self.c * sigmoid((cluster_end - cluster_start) - 1)
                 new_sentence_similarity = np.max(new_sentence_similarities)
                 
                 # Use the minimum of the minimum similarities and the pairwise_min
@@ -79,10 +70,10 @@ class MaxMinChunker(BaseChunker):
                 adjusted_threshold = 0
                 # Use an initial constant when there's only one sentence in the cluster
                 pairwise_min = cosine_similarity(embeddings[i].reshape(1, -1), cluster_embeddings)[0]
-                new_sentence_similarity = init_constant * pairwise_min
+                new_sentence_similarity = self.init_constant * pairwise_min
 
             # Decide whether to add the sentence to the current paragraph or start a new one
-            if new_sentence_similarity > max(adjusted_threshold, fixed_threshold):
+            if new_sentence_similarity > max(adjusted_threshold, self.fixed_threshold):
                 current_paragraph.append(sentences[i])
                 cluster_end += 1
             else:
@@ -111,9 +102,6 @@ class MaxMinChunker(BaseChunker):
         # Gom nhóm các câu thành đoạn (paragraphs)
         paragraphs = self.process_sentences(
             sentences, np.array(embeddings),
-            fixed_threshold=self.fixed_threshold,
-            c=self.c,
-            init_constant=self.init_constant
         )
         # Gộp các câu trong mỗi đoạn thành 1 chunk
         chunks = [' '.join(paragraph) for paragraph in paragraphs]
