@@ -1,0 +1,26 @@
+base_path: "/workspace/thviet/trungnnv/vlsp-2025"
+cache_dir: "${base_path}/src/cache_dir"
+
+db:
+  collection_name: "baseline_512_tokens"
+
+embedding: 
+  vector_size: 768
+  embedding_model: "truro7/vn-law-embedding"
+  embedding_type: "transformer"
+  device: "cuda"
+
+chunking:
+  max_tokens: 512
+  chunk_overlap: 50
+  
+retrieval:
+  limit: 9
+  threshold: 0.8
+
+data:
+  corpus_path: "${base_path}/src/data/vlsp/legal_corpus.json"
+  train_path: "${base_path}/src/data/vlsp/train.json"
+  
+output:
+  result_path: "${base_path}/src/results/baseline_results.json"
