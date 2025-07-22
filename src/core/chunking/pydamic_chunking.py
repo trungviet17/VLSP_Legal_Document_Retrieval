@@ -6,7 +6,6 @@ from pyvi import ViTokenizer
 from tqdm import tqdm
 import numpy as np
 import re
-# from sklearn.metrics.pairwise import cosine_similarity
 from utils.model import get_embedding_model
 from src.core.chunking.baseline_chunking import BaseChunker
 
@@ -164,7 +163,7 @@ class PydamicChunker(BaseChunker):
                 else:
                     break
             else:
-                re_combine = False
+                self.re_combine = False
                 break
 
         if self.re_combine:
@@ -174,9 +173,14 @@ class PydamicChunker(BaseChunker):
 
     def _chunk_(self, text: str) -> list[str]:
 
-        chunks, chunks_len = self.sentence_chunking_main(text)
+        chunks, _ = self.sentence_chunking_main(text)
 
-        return chunks
+        vectors = []
+        for chunk in chunks:
+            vector = self.embedding_model.embed_documents(chunk)
+            vectors.append(vector)
+
+        return chunks, vectors
     
 
 if __name__ == "__main__": 

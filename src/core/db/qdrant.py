@@ -48,17 +48,18 @@ class QdrantConnector:
 
     def embedd_chunks(self, chunks: List[Dict[str, Any]], batch_size: int = 1000):
 
-        vectors = self.embedding_model.embed_documents([chunk['text'] for chunk in chunks])
         points = []
-        for i, (chunk, vector) in tqdm(enumerate(zip(chunks, vectors)), total=len(chunks), desc="Embedding and preparing points"):
+        for i, (chunk) in tqdm(enumerate(zip(chunks)), total=len(chunks), desc="Embedding and preparing points"):
             meta = chunk.get('metadata', None)
 
             meta['text'] = chunk['text']
+            print("hehe")
+            vector = chunk['vector']
             point = {
                 "id": str(uuid4()),
                 "vector": vector,
                 "payload": meta, 
-               
+            
             }
             points.append(PointStruct(**point))
 

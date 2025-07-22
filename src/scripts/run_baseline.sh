@@ -2,7 +2,7 @@
 
 # Default values
 
-BASE_PATH="/workspace/thviet/trungnnv/vlsp-2025"
+BASE_PATH="/Users/uncpham/Repo/VLSP_Legal_Document_Retrieval"
 run_pipeline() {
     cmd="python $BASE_PATH/src/pipeline/baseline.py"
     
