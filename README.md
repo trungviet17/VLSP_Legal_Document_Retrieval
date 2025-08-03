@@ -1,3 +1,4 @@
+
 # VLSP_Legal_Document_Retrieval
 
 ## Structure 
@@ -50,4 +51,3 @@ chmod +x run_baseline.sh
 
 ./run_baseline.sh --base_path= <your_path> --device=<cuda / cpu>
 ```
-
