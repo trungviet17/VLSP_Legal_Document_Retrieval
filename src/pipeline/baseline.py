@@ -10,29 +10,18 @@ import json
 from tqdm import tqdm
 from datetime import datetime
 import hydra 
+from hydra.utils import instantiate
 
 class BasePipeline:
 
     def __init__(self, cfg: DictConfig): 
         self.cfg = cfg
 
-        self.chunker = BaseChunker(
-            max_tokens = cfg.chunking.max_tokens,
-            chunk_overlap = cfg.chunking.chunk_overlap
-        )   
+        self.chunker: BaseChunker = instantiate(cfg.chunking)
 
-        self.db = QdrantConnector(
-            collection_name = cfg.db.collection_name,
-            vector_size = cfg.embedding.vector_size, 
-            embedding_model_name = cfg.embedding.embedding_model, 
-            embedding_type = cfg.embedding.embedding_type, 
-            embedding_cache_dir = cfg.cache_dir,
-            embedding_device = cfg.embedding.device,
-        )
+        self.db: QdrantConnector = instantiate(cfg.db)
 
-        self.retriever = BaseRetriever(
-            db_connector = self.db
-        )
+        self.retriever: BaseRetriever = instantiate(cfg.retrieval, db_connector=self.db)
 
         os.makedirs(os.path.dirname(cfg.output.result_path), exist_ok=True)
 
@@ -80,9 +69,7 @@ class BasePipeline:
             ground_truth = item['relevant_laws']
 
             retrieved_docs = self.retriever.retrieve(
-                query = query, 
-                threshold = self.cfg.retrieval.threshold, 
-                limit = self.cfg.retrieval.limit
+                query = query
             )
 
             retrieved_ids = [doc['payload']['aid'] for doc in retrieved_docs]
@@ -156,8 +143,9 @@ class BasePipeline:
 
 
 
-@hydra.main(config_path = "../config", config_name = "default")
+@hydra.main(config_path = "../config", config_name = "punc_chunking")
 def main(cfg: DictConfig):
+
     pipeline = BasePipeline(cfg)
     results = pipeline.run()
     print("Evaluation Results:", results)

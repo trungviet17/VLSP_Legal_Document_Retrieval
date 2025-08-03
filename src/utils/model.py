@@ -56,13 +56,19 @@ class ModelFactory:
     
 
 
-def get_embedding_model(model_name: str = "all-MiniLM-L6-v2", type: str = "transformer", cache_dir: str = EnvConfig.CACHE_DIR):
+def get_embedding_model(model_name: str = "all-MiniLM-L6-v2", type: str = "transformer", cache_dir: str = EnvConfig.CACHE_DIR, device: str = "cuda"):
     
     if type == "openai":
         return ModelFactory.get_openai_embeddings(model_name)
     elif type == "google":
         return ModelFactory.get_google_embeddings(model_name)
     elif type == "transformer":
-        return ModelFactory.get_transformer_embeddings(model_name, cache_dir=cache_dir)
+        return ModelFactory.get_transformer_embeddings(model_name, cache_dir=cache_dir, device=device)
     else:
         raise ValueError(f"Unsupported embedding model type: {type}")
+    
+
+if __name__ == "__main__":
+    # Example usage
+    embedding_model = get_embedding_model(model_name="truro7/vn-law-embedding", type="transformer")
+    print("Embedding model loaded:", embedding_model)

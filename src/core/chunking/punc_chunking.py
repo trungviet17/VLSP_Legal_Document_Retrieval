@@ -9,9 +9,9 @@ import re
 
 
 
-class PuncChunking(BaseChunker): 
+class PuncChunker(BaseChunker): 
 
-    def __init__(self, max_tokens: int = 512, chunk_overlap: int = 50, separator:List[str] = ["\n\n", "\t\t"]) -> None: 
+    def __init__(self, max_tokens: int = 512, chunk_overlap: int = 50, separator: str = "\n\n") -> None: 
         super().__init__(max_tokens, chunk_overlap)
         self.separator = separator
 
@@ -45,7 +45,7 @@ class PuncChunking(BaseChunker):
         tokenized_text = ViTokenizer.tokenize(text)
 
         chunks = []
-        raw_chunks = tokenized_text.split(self.separator[0])
+        raw_chunks = tokenized_text.split(self.separator)
         raw_chunks = [chunk.strip() for chunk in raw_chunks if chunk.strip()]
         half_chunk_size = self.max_tokens // 2
 
@@ -67,7 +67,7 @@ class PuncChunking(BaseChunker):
 
                 if prev_len <= next_len and idx > 0:
                     # Merge with previous chunk
-                    merged = raw_chunks[idx - 1] + self.separator[0] + raw_chunks[idx]
+                    merged = raw_chunks[idx - 1] + self.separator + raw_chunks[idx]
                     if len(merged.split()) > self.max_tokens + self.chunk_overlap:
                         # Split if merged chunk is too long
                         split_chunks = self._split_long_chunk(merged)
@@ -78,7 +78,7 @@ class PuncChunking(BaseChunker):
                     idx += 1
                 elif idx + 1 < len(raw_chunks):
                     # Merge with next chunk
-                    merged = raw_chunks[idx] + self.separator[0] + raw_chunks[idx + 1]
+                    merged = raw_chunks[idx] + self.separator + raw_chunks[idx + 1]
                     if len(merged.split()) > self.max_tokens + self.chunk_overlap:
                         split_chunks = self._split_long_chunk(merged)
                         chunks.extend(split_chunks)
@@ -102,8 +102,8 @@ if __name__ ==  "__main__":
     print(f"Original text length: {len(text.split())} tokens")
     tokenized_text = ViTokenizer.tokenize(text)
     print(f"Total tokens: {len(tokenized_text.split())}")
-    separator = ["\n", "\n"]
-    chunker = PuncChunking(max_tokens=512, chunk_overlap=0, separator=separator)
+    separator = "\n"
+    chunker = PuncChunker(max_tokens=512, chunk_overlap=0, separator=separator)
 
     chunks = chunker._chunk_(text)
     print(f"Total chunks: {len(chunks)}")

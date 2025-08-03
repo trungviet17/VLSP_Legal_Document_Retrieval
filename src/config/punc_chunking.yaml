@@ -3,17 +3,19 @@ cache_dir: "${base_path}/src/cache_dir"
 
 db:
   _target_: core.db.qdrant.QdrantConnector
-  collection_name: "baseline_512_tokens"
+  collection_name: "punc_chunking_512_tokens"
   vector_size: 768
   embedding_model_name: "truro7/vn-law-embedding"
   embedding_type: "transformer"
+  embedding_cache_dir: "${cache_dir}"
   embedding_device: "cuda"
 
 chunking:
-  _target_: core.chunking.baseline_chunking.BaseChunker
+  _target_: core.chunking.punc_chunking.PuncChunker
   max_tokens: 512
-  chunk_overlap: 50
-  
+  chunk_overlap: 0
+  separator: "\n"
+
 retrieval:
   _target_: core.retriever.baseline_retriever.BaseRetriever
   limit: 9
@@ -24,4 +26,4 @@ data:
   train_path: "${base_path}/src/data/vlsp/train.json"
   
 output:
-  result_path: "${base_path}/src/results/baseline_results.json"
+  result_path: "${base_path}/src/results/punc_chunking_results.json"
