@@ -50,7 +50,7 @@ class QdrantConnector:
 
     def embedd_chunks(self, chunks: List[Dict[str, Any]], batch_size: int = 1000):
 
-        vectors = self.embedding_model.embed_documents([chunk['text'] for chunk in chunks])
+        vectors = self.embedding_model.embed_documents([chunk['text'] for chunk in tqdm(chunks, desc="Embedding chunks")])
         points = []
         for i, (chunk, vector) in tqdm(enumerate(zip(chunks, vectors)), total=len(chunks), desc="Embedding and preparing points"):
             meta = chunk.get('metadata', None)
@@ -60,12 +60,12 @@ class QdrantConnector:
                 "id": str(uuid4()),
                 "vector": vector,
                 "payload": AIDPayloadSchema(
-                    id=chunk.get('id', str(uuid4())),
-                    aid=chunk.get('aid', ""),
-                    law_id=chunk.get('law_id', ""),
-                    text=chunk['text']
-                ).model_dump(), 
-               
+                    id=str(meta.get('id', "")),
+                    aid=str(meta.get('aid', "")),
+                    law_id=meta.get('law_id', None),
+                    text=chunk.get('text', None)
+                ).model_dump(),
+
             }
             points.append(PointStruct(**point))
 
@@ -109,6 +109,28 @@ class QdrantConnector:
 
         return results
 
+
+if __name__ == "__main__": 
+
+
+    chunks = [
+        {"text": "This is a sample text for embedding.", "metadata": {"id": "1", "aid": "AID-001", "law_id": "LAW-001"}},
+        {"text": "Another sample text for testing.", "metadata": {"id": "2", "aid": "AID-002", "law_id": "LAW-002"}},
+    ]
+
+
+    db_connector = QdrantConnector(
+        collection_name="test_collection",
+        vector_size=384,  # Example vector size for the embedding model
+        embedding_model_name="truro7/vn-law-embedding",
+        embedding_type="transformer",
+        embedding_cache_dir=EnvConfig.CACHE_DIR,
+        embedding_device="cuda",
+        qdrant_url=EnvConfig.QDRANT_URL,
+        qdrant_api_key=EnvConfig.QDRANT_API_KEY,
+    )
+
+    db_connector.embedd_chunks(chunks)
 
     
     

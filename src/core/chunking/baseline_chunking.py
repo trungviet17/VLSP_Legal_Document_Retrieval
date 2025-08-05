@@ -14,13 +14,14 @@ class BaseChunker:
 
     def process_corpus(self, corpus: List[str], metadata: List[Dict[str, Any]]) -> List[Dict[str, Any]]: 
         processed = []
-        for doc, meta in tqdm(zip(corpus, metadata), total = len(corpus), desc="Processing documents"):
+        for doc, meta in tqdm(zip(corpus, metadata), total = len(corpus), desc="Processing documents with chunking"):
             chunks = self._chunk_(doc)  
             for chunk in chunks:
                 processed.append({
                     "text": chunk,
                     "metadata": meta
                 })
+                
         return processed
     
     def _chunk_(self, text: str) -> list[str]:
