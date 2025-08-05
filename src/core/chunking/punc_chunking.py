@@ -37,6 +37,10 @@ class PuncChunker(BaseChunker):
             chunks.append(' '.join(sentences[start:end]))
             start = end
 
+        if len(chunks[-1].strip()) < half_chunk_size and len(chunks) > 1: 
+            chunks[-2] += self.separator + chunks[-1]
+            chunks.pop()  
+            
         return [c.strip() for c in chunks if c.strip()]
 
 

@@ -56,7 +56,7 @@ class BasePipeline:
             chunks = self.chunks
         )
 
-    def query_data(self): 
+    def query_data(self, ): 
 
         self.eval_data = self._load_data_(self.cfg.data.train_path)
 
@@ -82,8 +82,36 @@ class BasePipeline:
                 }
             )
 
-        return results  
+        return results   
 
+
+    def run_test(self): 
+        self.eval_data = self._load_data_(self.cfg.data.test_path)
+
+
+        results = []
+
+        for item in tqdm(self.eval_data, desc="Querying test data"):
+            query = item['question']
+            qid = item['id']
+
+            retrieved_docs = self.retriever.retrieve(
+                query = query
+            )
+
+            retrieved_ids = [int(doc['payload']['aid']) for doc in retrieved_docs]
+
+            results.append(
+               {
+                    "qid": qid,
+                    "relevant_laws": retrieved_ids
+                }
+            )
+
+        with open(self.cfg.output.result_path, 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+
+        return results
 
     def evaluate_and_save_results(self, results):
 
@@ -103,7 +131,7 @@ class BasePipeline:
             "timestamp": timestamp,
             "configuration": {
             "collection": self.cfg.db.collection_name,
-            "embedding_model": self.cfg.embedding.embedding_model,
+            "embedding_model": self.cfg.db.embedding_model_name,
             "chunk_size": self.cfg.chunking.max_tokens,
             "retrieval_limit": self.cfg.retrieval.limit,
             "threshold": self.cfg.retrieval.threshold
@@ -135,9 +163,10 @@ class BasePipeline:
 
 
     def run(self): 
-        self.process_corpus() # comment this line if you want to skip processing corpus
-        results = self.query_data()
-        evaluation_results = self.evaluate_and_save_results(results)
+        # self.process_corpus() # comment this line if you want to skip processing corpus
+        # results = self.query_data()
+        # evaluation_results = self.evaluate_and_save_results(results)
+        evaluation_results = self.run_test()
         return evaluation_results
 
 

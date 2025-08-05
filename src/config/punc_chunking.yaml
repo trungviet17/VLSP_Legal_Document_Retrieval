@@ -18,12 +18,13 @@ chunking:
 
 retrieval:
   _target_: core.retriever.baseline_retriever.BaseRetriever
-  limit: 9
-  threshold: 0.8
+  limit: 5
+  threshold: 0.6
 
 data:
   corpus_path: "${base_path}/src/data/vlsp/legal_corpus.json"
   train_path: "${base_path}/src/data/vlsp/train.json"
+  test_path: "${base_path}/src/data/vlsp/public_test.json"
   
 output:
   result_path: "${base_path}/src/results/punc_chunking_results.json"
